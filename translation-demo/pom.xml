@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.zero.i18n</groupId>
+		<artifactId>i18n-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>translation-demo</artifactId>
+	<name>translation-demo</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<plugins>
+			<!-- add the extracted sources as source folder to allow building the 
+				sources.jar -->
+			<plugin>
+				<groupId>com.zero.i18n</groupId>
+				<artifactId>translation-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<!-- <execution> <id>mls</id> <phase>generate-sources</phase> <goals> 
+						<goal>compileDatabase</goal> </goals> <configuration> <dbPass>uc4</dbPass> 
+						<dbUrl>jdbc:oracle:thin:@swgper0708-scan:1521/AEINTEGRSRV</dbUrl> <categories> 
+						<category>ECC AE</category> </categories> <dbUser>UC2T</dbUser> <javaOutdir>target/generated-sources-translations</javaOutdir> 
+						<mappingFile>mls-mapping.properties</mappingFile> <packageName>com.uc4.translations</packageName> 
+						<classPrefix>Translation</classPrefix> </configuration> </execution> -->
+					<execution>
+						<id>properties</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compileProperties</goal>
+						</goals>
+						<configuration>
+							<propertyFiles>
+								<propertyFile>src/main/java/com/zero/i18n/demo/i18n/infoMessage_en.properties</propertyFile>
+								<propertyFile>src/main/java/com/zero/i18n/demo/i18n/infoMessage_vn.properties</propertyFile>
+							</propertyFiles>
+							<javaOutdir>src/main/java/com/zero/i18n/demo/i18n</javaOutdir>
+							<packageName>com.zero.i18n.demo</packageName>
+							<classPrefix>Translation</classPrefix>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/java/com/zero/i18n/demo/i18n</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.codemodel</groupId>
+			<artifactId>codemodel</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zero.i18n</groupId>
+			<artifactId>translation-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- <dependency> <groupId>oracle</groupId> <artifactId>ojdbc</artifactId> 
+			<version>6</version> </dependency> -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		<!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
+			<version>4.0</version> </dependency> -->
+	</dependencies>
+</project>
