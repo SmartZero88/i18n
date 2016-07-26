@@ -37,31 +37,12 @@
 						</goals>
 						<configuration>
 							<propertyFiles>
-								<propertyFile>src/main/java/com/zero/i18n/demo/i18n/infoMessage_en.properties</propertyFile>
-								<propertyFile>src/main/java/com/zero/i18n/demo/i18n/infoMessage_vn.properties</propertyFile>
+								<propertyFile>src/main/resources/i18n/infoMessage_en.properties</propertyFile>
+								<propertyFile>src/main/resources/i18n/infoMessage_fr.properties</propertyFile>
 							</propertyFiles>
-							<javaOutdir>src/main/java/com/zero/i18n/demo/i18n</javaOutdir>
-							<packageName>com.zero.i18n.demo</packageName>
+							<javaOutdir>src/main/java/</javaOutdir>
+							<packageName>com.zero.i18n.demo.i18n</packageName>
 							<classPrefix>Translation</classPrefix>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/main/java/com/zero/i18n/demo/i18n</source>
-							</sources>
 						</configuration>
 					</execution>
 				</executions>

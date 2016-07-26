@@ -27,9 +27,6 @@ import com.zero.i18n.compiler.source.*;
     name = "compileProperties", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     requiresProject = false)
 public class PropertyCompilerMojo extends AbstractCompilerMojo<String> {
-    /**
-     * Password in clear text to use to connect to the database
-     */
     @Parameter(property = "sml.properties", required = true)
     List<File> propertyFiles;
 
