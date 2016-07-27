@@ -1,6 +1,7 @@
 package com.zero.i18n.api;
 
 public interface IText {
+
     /**
      * Get the (translated if possible) human readable text representation
      * 

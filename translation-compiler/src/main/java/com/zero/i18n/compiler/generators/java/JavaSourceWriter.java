@@ -49,15 +49,16 @@ public class JavaSourceWriter {
 
     }
 
-    private <T> Map<String, JDefinedClass> buildClasses(JCodeModel model, JClass defaultInterface,
-        JClass defaultImplementation, Collection<SMLEntry<T>> records) {
+    private <T> Map<String, JDefinedClass> buildClasses(
+        JCodeModel model, JClass defaultInterface, JClass defaultImplementation,
+        Collection<SMLEntry<T>> records) {
         Map<String, JDefinedClass> classes = Maps.newHashMap();
         for (SMLEntry<?> entry : records) {
             String category = entry.getCategory();
 
             JDefinedClass _class = ensureClass(model, classes, category);
-            JDefinedClass _dataClass = ensureDataClass(model, classes, category,
-                Math.abs(entry.getNaturalKey().hashCode()) % 10);
+            JDefinedClass _dataClass = ensureDataClass(
+                model, classes, category, Math.abs(entry.getNaturalKey().hashCode()) % 10);
 
             // buildLocaleProvider(model, _class);
 
@@ -115,13 +116,11 @@ public class JavaSourceWriter {
                 break;
             case 3:
                 interf = model.ref(ITextPattern3.class).narrow(defaultInterface).narrow(
-                    DEFAULT_CLASS, DEFAULT_CLASS,
-                    DEFAULT_CLASS);
+                    DEFAULT_CLASS, DEFAULT_CLASS, DEFAULT_CLASS);
                 break;
             default:
                 interf = model.ref(ITextPatternN.class).narrow(defaultInterface).narrow(
-                    DEFAULT_CLASS, DEFAULT_CLASS,
-                    DEFAULT_CLASS);
+                    DEFAULT_CLASS, DEFAULT_CLASS, DEFAULT_CLASS);
                 break;
         }
 
@@ -194,8 +193,7 @@ public class JavaSourceWriter {
     }
 
     private JDefinedClass ensureDataClass(
-        JCodeModel model, Map<String, JDefinedClass> classes, String category,
-        int split) {
+        JCodeModel model, Map<String, JDefinedClass> classes, String category, int split) {
         JPackage pkg = model._package(this.packageName + ".data");
 
         String className = "__Data" + generateClassName(category) + (split);

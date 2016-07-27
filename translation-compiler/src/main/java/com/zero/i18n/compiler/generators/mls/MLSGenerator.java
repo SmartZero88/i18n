@@ -14,8 +14,9 @@ public class MLSGenerator {
         String f = "";
         for (Entry<Locale, String> text : record.getTranslations().entrySet()) {
             Locale locale = text.getKey();
-            f += String.format("%08d", record.getMessageId()) + MLSLocales.getSingleChar(locale)
-                + record.getMessageType() + formatText(text.getValue()) + "\r\n";
+            f += String.format("%08d", record.getMessageId())
+                + MLSLocales.getSingleChar(locale) + record.getMessageType() + formatText(
+                    text.getValue()) + "\r\n";
         }
         return f;
     }

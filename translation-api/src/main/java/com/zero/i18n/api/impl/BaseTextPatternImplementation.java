@@ -8,13 +8,13 @@ import com.zero.i18n.api.*;
 public class BaseTextPatternImplementation<I> {
 
     public Map<Class<?>, ?> getMetadata() {
-        return metadata;
+        return this.metadata;
     }
 
     Map<Locale, String> translations;
-    private LocaleProvider localeProvider;
-    private Map<Class<?>, ?> metadata;
-    private Class<? extends I> implementation;
+    private final LocaleProvider localeProvider;
+    private final Map<Class<?>, ?> metadata;
+    private final Class<? extends I> implementation;
 
     public BaseTextPatternImplementation(
         Class<? extends I> implementation, LocaleProvider localeProvider2,
@@ -26,29 +26,27 @@ public class BaseTextPatternImplementation<I> {
     }
 
     public Locale getDefaultLocale() {
-        return localeProvider.getLocale();
+        return this.localeProvider.getLocale();
     }
 
     protected I internalGet(Object... args) {
         try {
-            return implementation
+            return this.implementation
                 .getConstructor(BaseTextPatternImplementation.class, Object[].class).newInstance(
-                    this,
-                    args);
+                    this, args);
         } catch (
             InstantiationException | IllegalAccessException | IllegalArgumentException
-            | InvocationTargetException
-            | NoSuchMethodException | SecurityException e) {
+            | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new LinkageError("Translation not correctly generated", e);
         }
     }
 
     public Map<Locale, String> getTranslations() {
-        return translations;
+        return this.translations;
     }
 
     public <T> T getMetadata(Class<T> metadataType) {
-        return (T) metadata.get(metadataType);
+        return (T) this.metadata.get(metadataType);
     }
 
 }

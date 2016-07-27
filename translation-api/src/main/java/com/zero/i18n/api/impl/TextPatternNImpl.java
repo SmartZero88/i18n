@@ -7,7 +7,8 @@ import com.zero.i18n.api.*;
 public class TextPatternNImpl<I, A, B, C> extends BaseTextPatternImplementation<I>
     implements ITextPatternN<I, A, B, C> {
 
-    public TextPatternNImpl(Class<? extends I> implementation, LocaleProvider localeProvider2,
+    public TextPatternNImpl(
+        Class<? extends I> implementation, LocaleProvider localeProvider2,
         Map<Locale, String> translations, Map<Class<?>, ?> metadata) {
         super(implementation, localeProvider2, translations, metadata);
     }

@@ -13,6 +13,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<i18n.version>0.0.1-SNAPSHOT</i18n.version>
 	</properties>
 	<build>
 		<plugins>
@@ -21,7 +22,7 @@
 			<plugin>
 				<groupId>com.zero.i18n</groupId>
 				<artifactId>translation-maven-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>${i18n.version}</version>
 				<executions>
 					<!-- <execution> <id>mls</id> <phase>generate-sources</phase> <goals> 
 						<goal>compileDatabase</goal> </goals> <configuration> <dbPass>uc4</dbPass> 
@@ -42,7 +43,23 @@
 							</propertyFiles>
 							<javaOutdir>src/main/java/</javaOutdir>
 							<packageName>com.zero.i18n.demo.i18n</packageName>
-							<classPrefix>Translation</classPrefix>
+							<classPrefix>Demo</classPrefix>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xml</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compileXML</goal>
+						</goals>
+						<configuration>
+							<propertyFiles>
+								<propertyFile>src/main/resources/i18n/infoMessage_en.properties</propertyFile>
+								<propertyFile>src/main/resources/i18n/infoMessage_fr.properties</propertyFile>
+							</propertyFiles>
+							<javaOutdir>src/main/java/</javaOutdir>
+							<packageName>com.zero.i18n.demo.i18n</packageName>
+							<classPrefix>Demo</classPrefix>
 						</configuration>
 					</execution>
 				</executions>
@@ -68,16 +85,17 @@
 		<dependency>
 			<groupId>com.zero.i18n</groupId>
 			<artifactId>translation-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${i18n.version}</version>
 		</dependency>
 		<!-- <dependency> <groupId>oracle</groupId> <artifactId>ojdbc</artifactId> 
 			<version>6</version> </dependency> -->
+		<!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
+			<version>4.0</version> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
-			<version>4.0</version> </dependency> -->
 	</dependencies>
 </project>

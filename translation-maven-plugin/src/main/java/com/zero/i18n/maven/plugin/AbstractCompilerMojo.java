@@ -23,21 +23,14 @@ import com.zero.i18n.compiler.generators.mls.*;
 import com.zero.i18n.compiler.model.*;
 
 public abstract class AbstractCompilerMojo<T> extends AbstractMojo {
-    /**
-     * Location of the MLS-File that will be written to
-     */
-    @Parameter(
-        defaultValue = "${project.build.directory}/ecc.mls", property = "sml.outputFile",
-        required = true)
-    File outputFile;
 
     /**
      * directory where to put the java files
      */
     @Parameter(
-        defaultValue = "${project.build.directory}/generated-sources", property = "sml.java.outdir",
+        property = "sml.java.outdir", defaultValue = "${project.build.directory}/generated-sources",
         required = true)
-    File javaOutdir;
+    protected File javaOutdir;
 
     @Parameter(property = "sml.java.implementationClassname", required = false)
     private String implementationClassname;
@@ -45,41 +38,41 @@ public abstract class AbstractCompilerMojo<T> extends AbstractMojo {
     @Parameter(property = "sml.java.interfaceClassname", required = false)
     private String interfaceClassname;
 
-    @Parameter(property = "sml.java.packageName", required = false)
-    private String packageName = "com.automic.translation.generated";
+    @Parameter(
+        property = "sml.java.packageName", defaultValue = "com.zero.translation.generated",
+        required = false)
+    private String packageName;
 
-    @Parameter(property = "sml.java.classPrefix", required = false)
-    private String classPrefix = "Translation";
+    @Parameter(property = "sml.java.classPrefix", defaultValue = "", required = false)
+    private String classPrefix;
 
     protected abstract boolean supportsMLS();
 
-    protected void generate(Collection<SMLEntry<T>> records) throws MojoExecutionException {
+    protected final void generate(Collection<SMLEntry<T>> records) throws MojoExecutionException {
         try {
             // ensure java outdir is here
-            javaOutdir.mkdirs();
+            if (this.javaOutdir == null) {
+                throw new IllegalArgumentException("specify javaOutdir");
+            }
+            this.javaOutdir.mkdirs();
 
-            if (outputFile != null && supportsMLS()) {
-                getLog().info("Writing " + records.size() + " records to " + outputFile);
-                new MLSFileWriter().write(outputFile, records);
+            if (this.supportsMLS()) {
+                this.getLog().info("Writing " + records.size() + " records to " + this.javaOutdir);
+                new MLSFileWriter().write(this.javaOutdir, records);
             }
 
-            if (javaOutdir != null) {
-                getLog().info("Writing " + records.size() + " records to " + javaOutdir);
-                if (interfaceClassname != null) {
-                    new JavaSourceWriter(packageName, classPrefix).write(
-                        javaOutdir, records, interfaceClassname, implementationClassname);
-                }
-                else {
-                    new JavaSourceWriter(packageName, classPrefix).write(javaOutdir, records);
-                }
-            }
-
-            if (javaOutdir == null && outputFile == null) {
-                throw new IllegalArgumentException("specify outputFile or javaOutdir");
+            this.getLog().info("Writing " + records.size() + " records to " + this.javaOutdir);
+            JavaSourceWriter writer = new JavaSourceWriter(this.packageName, this.classPrefix);
+            if (this.interfaceClassname != null) {
+                writer.write(
+                    this.javaOutdir, records, this.interfaceClassname,
+                    this.implementationClassname);
+            } else {
+                writer.write(this.javaOutdir, records);
             }
 
         } catch (Exception e) {
-            throw new MojoExecutionException("Unable to write to mls file " + outputFile, e);
+            throw new MojoExecutionException("Unable to write to mls file " + this.javaOutdir, e);
         }
 
     }

@@ -24,8 +24,7 @@ public final class ITextImpl implements IText {
         // Only format if there are arguments
         if (args.length > 0) {
             return MessageFormat.format(translatedText, args);
-        }
-        else {
+        } else {
             return translatedText;
         }
     }
@@ -33,8 +32,7 @@ public final class ITextImpl implements IText {
     private Locale ensureSupported(Locale locale) {
         if (this.baseTextPatternImplementation.translations.containsKey(locale)) {
             return locale;
-        }
-        else {
+        } else {
             // TODO log error or handle this case properly
             return Locale.ENGLISH;
         }

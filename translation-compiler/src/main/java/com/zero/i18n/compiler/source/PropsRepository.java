@@ -6,7 +6,6 @@ import java.util.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
 
-import com.google.common.collect.*;
 import com.zero.i18n.compiler.compiler.*;
 import com.zero.i18n.compiler.model.*;
 
@@ -21,46 +20,40 @@ public final class PropsRepository implements ITranslationRepository<String> {
 
     @Override
     public Collection<SMLEntry<String>> loadRecords() {
-        Map<String, SMLEntry<String>> recordMap = Maps.newHashMap();
+        Map<String, SMLEntry<String>> recordMap = new HashMap<>();
         System.out.println("Generating started");
 
-        for (File propertyFile : propertyFiles) {
-            Properties prop = new Properties();
+        for (File propertyFile : this.propertyFiles) {
             try {
+                Properties prop = new Properties();
                 prop.load(new FileInputStream(propertyFile));
-                String langCode = StringUtils.substringAfterLast(
-                    FilenameUtils.getBaseName(propertyFile.getName()),
-                    "_");
-                String categoryName = StringUtils.substringBeforeLast(
-                    FilenameUtils.getBaseName(propertyFile.getName()),
-                    "_");
+                String baseName = FilenameUtils.getBaseName(propertyFile.getName());
+                String langCode = StringUtils.substringAfterLast(baseName, "_");
+                String categoryName = StringUtils.substringBeforeLast(baseName, "_");
 
-                Locale locale = getFromCode(langCode);
+                Locale locale = this.getFromCode(langCode);
                 System.out.println(
                     "Generating from Property File " + propertyFile + " - " + locale);
                 for (String key : prop.stringPropertyNames()) {
-
                     String value = prop.getProperty(key);
-
-                    String globalKey = globalKey(key, categoryName);
+                    String globalKey = this.globalKey(key, categoryName);
                     SMLEntry<String> existingRecord = recordMap.get(globalKey);
                     if (existingRecord == null) {
                         System.out.println("Generating new Record " + globalKey);
-                        existingRecord = new SMLEntry<String>(key);
+                        existingRecord = new SMLEntry<>(key);
                         existingRecord.setCategory(categoryName);
                         existingRecord.setNaturalKey(key);
                         recordMap.put(globalKey, existingRecord);
+                    } else {
+                        throw new IllegalStateException(
+                            "Incomplete Translation: Duplicate '" + globalKey + "'");
                     }
-                    else {
-                        System.out.println("Generating found existing");
 
-                    }
-
-                    existingRecord.addLanguage(locale, convertText(value));
+                    existingRecord.addLanguage(locale, value);
                     System.out.println(
-                        "Generating from Property File " + globalKey + " => " + propertyFile + " - "
-                            + locale + " " + key + " " + value + " " + existingRecord
-                                .getTranslations().size());
+                        "Generating from Property File "
+                            + globalKey + " => " + propertyFile + " - " + locale + " " + key + " "
+                            + value + " " + existingRecord.getTranslations().size());
 
                     if (locale == Locale.ENGLISH) {
                         existingRecord.setNaturalKey(generateNaturalKey(existingRecord));
@@ -70,29 +63,13 @@ public final class PropsRepository implements ITranslationRepository<String> {
                 throw new RuntimeException(e);
             }
         }
-
-        boolean invalid = false;
-        for (SMLEntry<String> entry : recordMap.values()) {
-            // wrong number of entries
-            if (entry.getTranslations().size() != propertyFiles.size()) {
-                System.out.println("Incomplete Translation for key " + entry.getNaturalKey());
-                invalid = true;
-            }
-        }
-
-        if (invalid) {
-            throw new IllegalStateException("Incomplete Translation found.");
-        }
-
         return recordMap.values();
-
     }
 
     private Locale getFromCode(String langCode) {
         if (StringUtils.isBlank(langCode)) {
             return Locale.ENGLISH;
-        }
-        else {
+        } else {
             return Locale.forLanguageTag(langCode);
         }
     }
@@ -101,16 +78,11 @@ public final class PropsRepository implements ITranslationRepository<String> {
         return category + "/" + key;
     }
 
-    /** convert the text from mls format to a format usable by java */
-    private String convertText(String string) {
-        return string;
-    }
-
     private static String generateNaturalKey(SMLEntry<String> entry) {
 
         String withoutSpecials = entry
-            .getMessageId().replaceAll("[^a-zA-Z]", "_").replaceAll("__", "_")
-            .replaceAll("^_", "").replaceAll("_$", "").toUpperCase();
+            .getMessageId().replaceAll("[^a-zA-Z]", "_").replaceAll("__", "_").replaceAll("^_", "")
+            .replaceAll("_$", "").toUpperCase();
         List<String> words = Arrays.asList(withoutSpecials.split("_", MAX_CONSTANT_LENGTH + 1));
 
         if (words.size() > MAX_CONSTANT_LENGTH) {

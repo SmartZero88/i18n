@@ -24,8 +24,7 @@ import com.zero.i18n.compiler.model.*;
 import com.zero.i18n.compiler.source.*;
 
 @Mojo(
-    name = "compileXML", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
-    requiresProject = false)
+    name = "compileXML", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = false)
 public class XMLCompilerMojo extends AbstractCompilerMojo<String> {
     /**
      * Password in clear text to use to connect to the database
@@ -36,19 +35,20 @@ public class XMLCompilerMojo extends AbstractCompilerMojo<String> {
     @Parameter(property = "sml.failOnFileNotFound", required = false)
     boolean failOnFileNotFound = true;
 
+    @Override
     public void execute() throws MojoExecutionException {
         try {
-            if (!failOnFileNotFound && !propertyFiles.get(0).exists()) {
-                System.out.println(
-                    "File " + propertyFiles.get(0) + " not found, skipping this plugin");
-                return; //
+            if (!this.failOnFileNotFound && !this.propertyFiles.get(0).exists()) {
+                this.getLog().info(
+                    "File " + this.propertyFiles.get(0) + " not found, skipping this plugin");
+                return;
             }
-            ITranslationRepository<String> repository = new XMLRepository(propertyFiles);
+            ITranslationRepository<String> repository = new XMLRepository(this.propertyFiles);
             Collection<SMLEntry<String>> records = repository.loadRecords();
 
             super.generate(records);
         } catch (Exception e) {
-            throw new MojoExecutionException("Unable to write to mls file " + outputFile, e);
+            throw new MojoExecutionException("Unable to write to mls file " + this.javaOutdir, e);
         }
 
     }

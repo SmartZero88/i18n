@@ -27,25 +27,27 @@ import com.zero.i18n.compiler.source.*;
     name = "compileProperties", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     requiresProject = false)
 public class PropertyCompilerMojo extends AbstractCompilerMojo<String> {
+
     @Parameter(property = "sml.properties", required = true)
-    List<File> propertyFiles;
+    private List<File> propertyFiles;
 
     @Parameter(property = "sml.failOnFileNotFound", required = false)
-    boolean failOnFileNotFound = true;
+    private boolean failOnFileNotFound;
 
+    @Override
     public void execute() throws MojoExecutionException {
         try {
-            if (!failOnFileNotFound && !propertyFiles.get(0).exists()) {
-                System.out.println(
-                    "File " + propertyFiles.get(0) + " not found, skipping this plugin");
-                return; //
+            if (!this.failOnFileNotFound && !this.propertyFiles.get(0).exists()) {
+                this.getLog().info(
+                    "File " + this.propertyFiles.get(0) + " not found, skipping this plugin");
+                return;
             }
-            ITranslationRepository<String> repository = new PropsRepository(propertyFiles);
+            ITranslationRepository<String> repository = new PropsRepository(this.propertyFiles);
             Collection<SMLEntry<String>> records = repository.loadRecords();
 
             super.generate(records);
         } catch (Exception e) {
-            throw new MojoExecutionException("Unable to write to mls file " + outputFile, e);
+            throw new MojoExecutionException("Unable to write to mls file " + this.javaOutdir, e);
         }
 
     }

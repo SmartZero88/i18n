@@ -17,6 +17,7 @@ public class LocaleProviders {
      * this class
      */
     private static final class LocaleProviderProxy implements LocaleProvider {
+
         @Override
         public Locale getLocale() {
             return get().getLocale();

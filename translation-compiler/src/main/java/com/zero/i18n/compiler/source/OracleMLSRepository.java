@@ -12,11 +12,11 @@ import com.zero.i18n.compiler.model.*;
 public class OracleMLSRepository implements ITranslationRepository<Long> {
 
     private static final int MAX_CONSTANT_LENGTH = 6;
-    private String dbUrl;
-    private String dbUser;
-    private String dbPass;
-    private Properties keyMapping;
-    private List<String> categories;
+    private final String dbUrl;
+    private final String dbUser;
+    private final String dbPass;
+    private final Properties keyMapping;
+    private final List<String> categories;
 
     public OracleMLSRepository(
         String dbUrl, String dbUser, String dbPass, List<String> categories,
@@ -36,12 +36,13 @@ public class OracleMLSRepository implements ITranslationRepository<Long> {
 
         Map<Long, SMLEntry<Long>> recordMap = Maps.newHashMap();
 
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
+        try (
+            Connection connection = DriverManager.getConnection(
+                this.dbUrl, this.dbUser, this.dbPass)) {
 
-            PreparedStatement statement = connection
-                .prepareStatement(
-                    "select MSGA_TEXT, MSGTX_MSG_IDNR, MSGTX_MSGL_SHORT, MSGTX_TEXT, MSG_MSGT_TYPE "
-                        + "from MSGTX, MSG, MSGA where MSG_IDNR = MSGTX_MSG_IDNR and MSGA_OH_IDNR = MSG_OH_IDNR order by MSGTX_MSG_IDNR");
+            PreparedStatement statement = connection.prepareStatement(
+                "select MSGA_TEXT, MSGTX_MSG_IDNR, MSGTX_MSGL_SHORT, MSGTX_TEXT, MSG_MSGT_TYPE "
+                    + "from MSGTX, MSG, MSGA where MSG_IDNR = MSGTX_MSG_IDNR and MSGA_OH_IDNR = MSG_OH_IDNR order by MSGTX_MSG_IDNR");
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 String category = result.getString(1);
@@ -50,15 +51,15 @@ public class OracleMLSRepository implements ITranslationRepository<Long> {
                 String text = result.getString(4);
                 String messageType = result.getString(5);
 
-                if (categories != null && categories.size() > 0) {
-                    if (!categories.contains(category)) {
+                if (this.categories != null && this.categories.size() > 0) {
+                    if (!this.categories.contains(category)) {
                         continue;
                     }
                 }
 
                 SMLEntry<Long> existingRecord = recordMap.get(messageId);
                 if (existingRecord == null) {
-                    existingRecord = new SMLEntry<Long>(messageId);
+                    existingRecord = new SMLEntry<>(messageId);
                     existingRecord.setCategory(category);
                     existingRecord.setMessageType(messageType);
                     existingRecord.setNaturalKey("MLS" + messageId); // This is the fallback, will
@@ -68,10 +69,10 @@ public class OracleMLSRepository implements ITranslationRepository<Long> {
                     recordMap.put(messageId, existingRecord);
                 }
 
-                existingRecord.addLanguage(MLSLocales.getLocale(language), convertText(text));
+                existingRecord.addLanguage(MLSLocales.getLocale(language), this.convertText(text));
 
                 if (MLSLocales.getLocale(language) == Locale.ENGLISH) {
-                    existingRecord.setNaturalKey(findNaturalKey(existingRecord));
+                    existingRecord.setNaturalKey(this.findNaturalKey(existingRecord));
                 }
 
             }
@@ -98,17 +99,17 @@ public class OracleMLSRepository implements ITranslationRepository<Long> {
 
     private String findNaturalKey(SMLEntry<Long> existingRecord) {
         String key = existingRecord.getMessageId() + "";
-        String value = keyMapping.getProperty(key);
+        String value = this.keyMapping.getProperty(key);
         if (value == null) {
             value = generateNaturalKey(existingRecord);
-            keyMapping.setProperty(key, value);
+            this.keyMapping.setProperty(key, value);
         }
 
         // _ at start only when value begins with a number
         value = StringUtils.removeStart(value, "_");
         if (StringUtils.isNumeric(value.substring(0, 1))) {
             value = "_" + value;
-            keyMapping.setProperty(key, value);
+            this.keyMapping.setProperty(key, value);
         }
 
         System.out.println("NATURAL KEY " + key + " -> " + value);
@@ -121,11 +122,10 @@ public class OracleMLSRepository implements ITranslationRepository<Long> {
         if (englishTranslation == null) {
             System.err.println("Translation not found for key " + entry.getMessageId());
             return "UNKNOWN_" + entry.getMessageId();
-        }
-        else {
+        } else {
             String withoutSpecials = englishTranslation
-                .replaceAll("[^a-zA-Z]", "_").replaceAll("__", "_")
-                .replaceAll("^_", "").replaceAll("_$", "").toUpperCase();
+                .replaceAll("[^a-zA-Z]", "_").replaceAll("__", "_").replaceAll("^_", "").replaceAll(
+                    "_$", "").toUpperCase();
             List<String> words = Arrays.asList(withoutSpecials.split("_", MAX_CONSTANT_LENGTH + 1));
 
             if (words.size() > MAX_CONSTANT_LENGTH) {
