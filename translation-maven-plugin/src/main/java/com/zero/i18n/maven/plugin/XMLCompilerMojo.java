@@ -26,6 +26,7 @@ import com.zero.i18n.compiler.source.*;
 @Mojo(
     name = "compileXML", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = false)
 public class XMLCompilerMojo extends AbstractCompilerMojo<String> {
+
     /**
      * Password in clear text to use to connect to the database
      */
@@ -45,7 +46,6 @@ public class XMLCompilerMojo extends AbstractCompilerMojo<String> {
             }
             ITranslationRepository<String> repository = new XMLRepository(this.propertyFiles);
             Collection<SMLEntry<String>> records = repository.loadRecords();
-
             super.generate(records);
         } catch (Exception e) {
             throw new MojoExecutionException("Unable to write to mls file " + this.javaOutdir, e);

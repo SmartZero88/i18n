@@ -28,8 +28,11 @@ import com.zero.i18n.compiler.source.*;
     requiresProject = false)
 public class PropertyCompilerMojo extends AbstractCompilerMojo<String> {
 
+    @Parameter(property = "sml.directory", required = false)
+    private File directory;
+
     @Parameter(property = "sml.properties", required = true)
-    private List<File> propertyFiles;
+    private final List<File> propertyFiles = new ArrayList<>();
 
     @Parameter(property = "sml.failOnFileNotFound", required = false)
     private boolean failOnFileNotFound;
@@ -37,12 +40,22 @@ public class PropertyCompilerMojo extends AbstractCompilerMojo<String> {
     @Override
     public void execute() throws MojoExecutionException {
         try {
+            File[] files = this.directory.listFiles(new FileFilter() {
+
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.getName().endsWith(".properties");
+                }
+            });
+            Set<File> props = new HashSet<>();
+            props.addAll(this.propertyFiles);
+            props.addAll(Arrays.asList(files));
             if (!this.failOnFileNotFound && !this.propertyFiles.get(0).exists()) {
                 this.getLog().info(
                     "File " + this.propertyFiles.get(0) + " not found, skipping this plugin");
                 return;
             }
-            ITranslationRepository<String> repository = new PropsRepository(this.propertyFiles);
+            ITranslationRepository<String> repository = new PropsRepository(props);
             Collection<SMLEntry<String>> records = repository.loadRecords();
 
             super.generate(records);

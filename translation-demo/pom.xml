@@ -37,6 +37,7 @@
 							<goal>compileProperties</goal>
 						</goals>
 						<configuration>
+							<directory>src/x/resources/i18n</directory>
 							<propertyFiles>
 								<propertyFile>src/main/resources/i18n/infoMessage_en.properties</propertyFile>
 								<propertyFile>src/main/resources/i18n/infoMessage_fr.properties</propertyFile>
@@ -53,6 +54,7 @@
 							<goal>compileXML</goal>
 						</goals>
 						<configuration>
+							<directory>src/main/resources/i18n</directory>
 							<propertyFiles>
 								<propertyFile>src/main/resources/i18n/infoMessage_en.properties</propertyFile>
 								<propertyFile>src/main/resources/i18n/infoMessage_fr.properties</propertyFile>

@@ -12,9 +12,9 @@ import com.zero.i18n.compiler.model.*;
 public final class PropsRepository implements ITranslationRepository<String> {
 
     private static final int MAX_CONSTANT_LENGTH = 6;
-    private final List<File> propertyFiles;
+    private final Collection<File> propertyFiles;
 
-    public PropsRepository(List<File> propertyFiles) {
+    public PropsRepository(Collection<File> propertyFiles) {
         this.propertyFiles = propertyFiles;
     }
 
